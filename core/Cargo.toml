@@ -1,0 +1,10 @@
+[package]
+name = "traclusdl_core"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.88"
+
+[dependencies]
+clap = { version = "4.5.57", features = ["derive"] }
+rayon = "1.10"
+rustc-hash = "1"

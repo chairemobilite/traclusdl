@@ -1,0 +1,2 @@
+name	weight	y_start	x_start	x_end	y_end
+route_A	3	290424.1	5038577.4	295244.2	5048310.6

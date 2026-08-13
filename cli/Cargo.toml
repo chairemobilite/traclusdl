@@ -1,0 +1,8 @@
+[package]
+name = "traclusdl_cli"
+version = "1.0.0"
+edition = "2024"
+
+[dependencies]
+traclusdl_core = {path = "../core"}
+clap = { version = "4.5.57", features = ["derive"] }
