@@ -1,0 +1,83 @@
+# Workflow to verify the code style of the commit, that it builds correctly
+# and make sure unit tests run too with all supported rust versions
+
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # stable is what everybody uses, 1.88 is the rust-version declared in the manifests
+        rust-version: [stable, "1.88"]
+    steps:
+    - uses: actions/checkout@v7.0.1
+      with:
+        persist-credentials: false
+    - name: Install system dependencies
+      # Required by eframe/egui and the rfd file picker in the ui crate
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtk-3-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev libssl-dev
+    - name: Use Rust ${{ matrix.rust-version }}
+      uses: dtolnay/rust-toolchain@master # Explicit use of master to track latest rust toolchain
+      with:
+        toolchain: ${{ matrix.rust-version }}
+    - name: Cache cargo registry and target dir
+      uses: Swatinem/rust-cache@v2.9.2
+    - name: Build
+      # --locked fails the build if Cargo.lock is out of date with the manifests
+      run: cargo build --workspace --all-targets --locked
+    - name: Unit Test
+      run: cargo test --workspace --locked
+    - name: CLI smoke test
+      # Run on a copy, the output files are written next to the input file
+      run: |
+        cp data/sample_input_traclus_with_header.txt "$RUNNER_TEMP/input.txt"
+        cargo run --locked -p traclusdl_cli -- --file "$RUNNER_TEMP/input.txt" --output ci_smoke
+        test -f "$RUNNER_TEMP/ci_smoke.corridors.txt"
+
+  code-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7.0.1
+      with:
+        persist-credentials: false
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtk-3-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev libssl-dev
+    - name: Use stable Rust
+      uses: dtolnay/rust-toolchain@stable # Explicit use of stable to track the stable rust toolchain
+      with:
+        components: clippy
+    - name: Cache cargo registry and target dir
+      uses: Swatinem/rust-cache@v2.9.2
+    - name: Lint
+      run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+  check-format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7.0.1
+      with:
+        persist-credentials: false
+    - name: Use stable Rust
+      uses: dtolnay/rust-toolchain@stable # Explicit use of stable to track the stable rust toolchain
+      with:
+        components: rustfmt
+    - name: Check format
+      run: cargo fmt --all --check
