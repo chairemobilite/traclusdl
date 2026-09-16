@@ -81,7 +81,7 @@ impl ClusteredTrajectories {
             .map(|c| c.cluster.get_all_members_iter().count())
             .sum();
         vec![
-            format!("=== Corridor Summary ==="),
+            "=== Corridor Summary ===".to_owned(),
             format!("- Total corridors found: {}", self.corridors.len()),
             format!("- Total clustered segments: {}", total_clustered_segments),
             format!(
