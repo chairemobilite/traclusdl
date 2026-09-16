@@ -12,6 +12,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
     groups:
       cargo:
         patterns: ["*"]
+        update-types: ["minor", "patch"]
