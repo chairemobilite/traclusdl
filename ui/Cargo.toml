@@ -8,4 +8,4 @@ rust-version = "1.88"
 traclusdl_core = {path = "../core"}
 clap = { version = "4.5.57", features = ["derive"] }
 eframe = "0.27"
-rfd = "0.14"   # file picker
+rfd = "0.17"   # file picker
