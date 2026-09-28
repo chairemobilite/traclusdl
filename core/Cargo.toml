@@ -7,4 +7,4 @@ rust-version = "1.88"
 [dependencies]
 clap = { version = "4.5.57", features = ["derive"] }
 rayon = "1.10"
-rustc-hash = "1"
+rustc-hash = "2"
