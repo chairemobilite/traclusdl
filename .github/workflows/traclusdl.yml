@@ -37,7 +37,7 @@ jobs:
       with:
         toolchain: ${{ matrix.rust-version }}
     - name: Cache cargo registry and target dir
-      uses: Swatinem/rust-cache@v2.9.2
+      uses: Swatinem/rust-cache@v2.9.3
     - name: Build
       # --locked fails the build if Cargo.lock is out of date with the manifests
       run: cargo build --workspace --all-targets --locked
@@ -65,7 +65,7 @@ jobs:
       with:
         components: clippy
     - name: Cache cargo registry and target dir
-      uses: Swatinem/rust-cache@v2.9.2
+      uses: Swatinem/rust-cache@v2.9.3
     - name: Lint
       run: cargo clippy --workspace --all-targets --locked -- -D warnings
 
